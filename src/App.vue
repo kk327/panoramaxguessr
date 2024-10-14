@@ -80,13 +80,12 @@
         v-if="aboutVisible"
         @close="aboutVisible = false"
     />
-    <div 
+    <section 
         v-if="!successfullyLoaded"
         id="loadingText"
     >
         <p>Loading Panoramax<br>Please wait{{ ".".repeat(loadingDotAmount) }}</p>
-    </div>
-    <div id="test">{{ }}</div>
+    </section>
 </template>
 
 <style>
@@ -95,13 +94,6 @@
         background-color: #37474f;
         color: rgb(32, 32, 32);
         font-family: Arial, Helvetica, sans-serif;
-    }
-  
-    #test {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        background-color: white;
     }
 
     .leaflet-marker-icon {
