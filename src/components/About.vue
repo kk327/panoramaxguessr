@@ -1,10 +1,34 @@
 <script setup>
+    import { useTemplateRef, onUnmounted } from 'vue';
 
+    const emit = defineEmits([
+        "close"
+    ]);
+
+    const focusable = [ useTemplateRef("article"), 
+                        useTemplateRef("button"), 
+                        useTemplateRef("codeberg"), 
+                        useTemplateRef("github") ];
+
+    const focusListener = (e) => {
+        if (!focusable.includes(e.target.value)) {
+            focusable[0].value.focus();
+        }
+    }    
+
+    addEventListener("focus", focusListener)
+
+    onUnmounted(() => {
+        removeEventListener("focus", focusListener);
+    })
 </script>
 
 <template>
     <main>
-        <article>
+        <article 
+            ref="article" 
+            tabindex="0"
+        >
             <h1>PanoramaxGuessr against Google Street View</h1>
             <p>
                 PanoramaxGuessr is a FOSS alternative to GeoGuessr and other similar games.
@@ -32,7 +56,7 @@
                 Automoving forward will make you automove in the direction in which the person taking the photos was moving, and automoving backwards will automove you in the opposite direction.
                 The last major difference is that there's significantly less photos than on Google Street View, and that they're mostly from France.
             </p>
-            <h1>How to play? The basics</h1>
+            <h1>How to play in general</h1>
             <p>
                 You're put into a random real life place, and your goal is to find where you are and select the location on the map.
                 To do so you move around and try to find information. There's a chance of being in a place with only one photo, in that case you have to place your guess without moving.
@@ -40,14 +64,24 @@
                 There's also a button to go back to the primary location, which is below the map on the screen. Left to it is a compass that you can use to your advantage as well.
                 When you're finished looking for where you are, select your guess on the map and click the Guess button. 
                 You'll see a fullscreen map with the correct location marked with a green marker on it.
+                In addition to navigating using clicking, there are keyboard bindings. 9 - move forward in the direction in which the person taking the photos was moving in, 3 - move backwards, space - start/stop automoving forward, b - automove backwards, arrow keys - rotate.
             </p>
             <p>
-                <a href="https://codeberg.org/k327/panoramaxguessr">Codeberg</a> 
+                <a 
+                    href="https://codeberg.org/k327/panoramaxguessr" 
+                    ref="codeberg"
+                >Codeberg</a> 
                 | 
-                <a href="https://github.com/kk327/panoramaxguessr">Github</a>
+                <a 
+                    href="https://github.com/kk327/panoramaxguessr" 
+                    ref="github"
+                >Github</a>
             </p>
         </article>
-        <button @click="$emit('close')">
+        <button 
+            @click="$emit('close')"
+            ref="button"
+        >
             <img 
                 src="@/assets/close.png"
                 alt="X"

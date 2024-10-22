@@ -52,6 +52,15 @@
         reloading.value = true;
         setTimeout(() => reloading.value = false, 100);
     }, 6000);
+
+    addEventListener("keydown", (e) => {
+        if (aboutVisible.value) {
+            e.stopImmediatePropagation();
+            if (e.key == "Escape") {
+                aboutVisible.value = false;
+            }
+        }
+    })
 </script>
 
 <template>

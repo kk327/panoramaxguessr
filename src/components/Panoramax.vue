@@ -1,6 +1,10 @@
 <script setup>
     import { onMounted, ref } from 'vue';
 
+    const props = defineProps([
+        "aboutVisible"
+    ]);
+
     const emit = defineEmits([
         "loaded",
         "rotationChanged",
@@ -80,7 +84,21 @@
         viewer.addEventListener("psv:view-rotated", (viewer) => emit("rotationChanged", viewer.detail.x));
         viewer.addEventListener("sequence-playing", () => automovingForward.value = true);
         viewer.addEventListener("sequence-stopped", () => automovingForward.value = false);
-    })
+
+        addEventListener("keydown", (e) => {
+            if (e.key == " ") {
+                if (automovingBackwards.value) {
+                    automovingBackwards.value = false;
+                }
+            } else if (e.key == "b") {
+                if (!automovingBackwards.value) {
+                    playSequenceBackwards();
+                } else {
+                    automovingBackwards.value = false;
+                }
+            }
+        });
+    });
 
     function loaded(viewer) {
         emit("loaded", viewer.detail.lat, viewer.detail.lon);
@@ -214,7 +232,7 @@
         align-items: center;
     }
 
-    button:disabled {
+    button:disabled { 
         background-color: rgb(235, 235, 235) !important;
         color: rgb(32, 32, 32) !important;
         cursor: not-allowed !important;

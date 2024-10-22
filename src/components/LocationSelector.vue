@@ -49,8 +49,8 @@
         <section id="bar">
             <button 
                 id="guessButton"
-                :class="{ disabled: !markerPlaced }"
-                @click="markerPlaced ? $emit('guessPlaced', guessMarker.getLatLng().lat, guessMarker.getLatLng().lng) : {}"
+                :disabled="!markerPlaced"
+                @click="$emit('guessPlaced', guessMarker.getLatLng().lat, guessMarker.getLatLng().lng)"
                 :title="markerPlaced ? '' : 'Place a marker on the map first'"
             >Guess</button>
 
@@ -161,7 +161,7 @@
         }
     }
 
-    .disabled {
+    #guessButton:disabled {
         background-color: rgb(200, 200, 200) !important;
         color: rgb(135, 135, 135) !important;
         cursor: not-allowed !important;
