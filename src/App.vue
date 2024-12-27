@@ -3,7 +3,7 @@
     import Panoramax from './components/Panoramax.vue';
     import LocationSelector from './components/LocationSelector.vue';
     import EndScreen from './components/EndScreen.vue';
-    import About from './components/About.vue';
+    import Info from './components/Info.vue';
 
     const location = ref([]);
     const guessLocation = ref([]);
@@ -15,7 +15,7 @@
     const successfullyLoaded = ref(false);
     const loadingDotAmount = ref(0);
     const reloading = ref(false);
-    const aboutVisible = ref(false);
+    const visibleInfo = ref("");
 
     function onLoad(latitude, longitude) {
         loaded.value = true;
@@ -29,7 +29,7 @@
 
     function addCopyright(object) {
         if (!copyright.value.map((e) => e.author + e.license + e.licenseLink).includes(object.author + object.license + object.licenseLink)) {
-            copyright.value.push({ author: object.author, license: object.license, licenseLink: object.licenseLink });
+            copyright.value.push({ author: object.author, license: object.license, licenseLink: object.licenseLink, examplePhoto: object.examplePhoto });
         }
     }
 
@@ -51,13 +51,13 @@
     const onFailedLoad = setInterval(() => {
         reloading.value = true;
         setTimeout(() => reloading.value = false, 100);
-    }, 6000);
+    }, 7000);
 
     addEventListener("keydown", (e) => {
-        if (aboutVisible.value) {
+        if (visibleInfo.value) {
             e.stopImmediatePropagation();
             if (e.key == "Escape") {
-                aboutVisible.value = false;
+                visibleInfo.value = "";
             }
         }
     })
@@ -77,7 +77,8 @@
         :rotation="rotation"
         @guessPlaced="onGameEnd"
         @backToStart="panoramax.goBackToStart()"
-        @showAboutInfo="aboutVisible = true"
+        @showAboutInfo="visibleInfo = 'about'"
+        @showSettings="visibleInfo = 'settings'"
     />
     <EndScreen
         v-if="gameEnded"
@@ -85,9 +86,10 @@
         :guessLocation="guessLocation"
         :copyright="copyright"
     />
-    <About
-        v-if="aboutVisible"
-        @close="aboutVisible = false"
+    <Info
+        v-if="visibleInfo"
+        :visibleInfo="visibleInfo"
+        @close="visibleInfo = ''"
     />
     <section 
         v-if="!successfullyLoaded"
@@ -171,6 +173,7 @@
         font-weight: 600;
         color: white;
         font-size: 150%;
-        text-align: center
+        text-align: center;
+        background-color: #37474f;
     }
 </style>

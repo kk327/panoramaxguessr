@@ -1,9 +1,5 @@
 <script setup>
-    import { onMounted, ref } from 'vue';
-
-    const props = defineProps([
-        "aboutVisible"
-    ]);
+    import { onMounted, ref, onUnmounted } from 'vue';
 
     const emit = defineEmits([
         "loaded",
@@ -19,16 +15,21 @@
     const automovingBackwards = ref(false);
     const automovingForward = ref(false);
     const hasLoaded = ref(false);
+    const unmounted = ref(false);
 
     let viewer;
     let instance = "";
 
+    onUnmounted(() => {
+        unmounted.value = true;
+    })
+    
     onMounted(async () => {
         let done = false;
         let picture = "";
         const instances = ["https://panoramax.openstreetmap.fr/api", "https://panoramax.ign.fr/api"];
 
-        while (!done) {
+        while (!done && !unmounted.value) {
             instance = instances[Math.floor(Math.random() * 2)];
             
             let attempts = 0;
@@ -56,16 +57,37 @@
                 continue;
             }
 
+            if (localStorage.getItem("startOn360")) {
+                const sequenceData = await(await fetch(sequence)).json();
+                if (sequenceData.summaries["pers:interior_orientation"][0].field_of_view != "360") {
+                    continue;
+                }
+            }
+
             attempts = 0;
             const collectionData = await(await fetch(sequence + "/items")).json();
             picture = collectionData.features[Math.floor(Math.random() * collectionData.features.length)].id;
+
+            if (localStorage.getItem("neverStartOnOne") && collectionData.features.length == 1) {
+                continue;
+            }
+
+            if (unmounted.value) {
+                return;
+            }
             
             done = true;
             firstPicture.value = picture;
             pictureId.value = picture;
             picturesInSequence.value = collectionData.features.map((e) => { return e.id });
             previousSequence.value = sequence.substring(51);
-            emit("addCopyright", { author: collectionData.features[0].properties["geovisio:producer"], license: collectionData.features[0].properties.license, licenseLink: collectionData.features[0].links[4].href });
+            
+            emit("addCopyright", { 
+                author: collectionData.features[0].properties["geovisio:producer"], 
+                license: collectionData.features[0].properties.license, 
+                licenseLink: collectionData.features[0].links[4].href,
+                examplePhoto: picture
+            });
         }
 
         viewer = new Panoramax.Viewer(
@@ -113,7 +135,12 @@
             previousSequence.value = viewer.detail.seqId;
             const picturesData = (await(await fetch(instance + "/collections/" + viewer.detail.seqId + "/items")).json()).features;
             picturesInSequence.value = picturesData.map((e) => { return e.id });
-            emit("addCopyright", { author: picturesData[0].properties["geovisio:producer"], license: picturesData[0].properties.license, licenseLink: picturesData[0].links[4].href });
+            emit("addCopyright", { 
+                author: picturesData[0].properties["geovisio:producer"], 
+                license: picturesData[0].properties.license, 
+                licenseLink: picturesData[0].links[4].href,
+                examplePhoto: picturesData[0].id
+            });
         }
     }
 

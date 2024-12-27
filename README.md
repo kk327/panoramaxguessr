@@ -14,6 +14,7 @@ The first thing that you might notice, depending on your luck, is that only some
 The reason for that is that the photos are taken by regular people, and not everyone is going to buy a 360° camera just to take photos for a Google Street View alternative.
 Although that likely seems like a limitation at first, it can be taken as an additional challenge, like a feature. 
 If you start in a city in a location with 2D photo coverage only, you can try to find a 360° sequence to start being able to see more information.
+Although if you really dislike 2D photos, there's a setting that allows you to always start on a 360° sequence.
 I just mentioned sequences, those are the second difference. 
 Imagine a person moving from one place to another one, taking a photo every a moment. Then they upload them to Panoramax, and that's a sequence.
 When you use the white arrow buttons to move, you're moving along the sequence that you're currently on. 
@@ -26,7 +27,7 @@ The last major difference is that there's significantly less photos than on Goog
 ## How to play in general
 You can play it at [https://panoramaxguessr.k327.eu](https://panoramaxguessr.k327.eu) or build and host it yourself.
 When you start, you're put into a random real life place, and your goal is to find where you are and select the location on the map.
-To do so you move around and try to find information. There's a chance of being in a place with only one photo, in that case you have to place your guess without moving.
+To do so you move around and try to find information. There's a chance of being in a place with only one photo, in that case you have to place your guess without moving. It's possible to remove that chance with a setting though.
 You can move by a bit by clicking the single arrow buttons, and you can start automoving by clicking the double arrow buttons at the top of the screen.
 There's also a button to go back to the primary location, which is below the map on the screen. Left to it is a compass that you can use to your advantage as well.
 When you're finished looking for where you are, select your guess on the map and click the Guess button. 

@@ -2,6 +2,7 @@
     import { onMounted } from 'vue';
     import redMarkerImage from "@/assets/redmarker.png"
     import greenMarkerImage from "@/assets/greenmarker.png"
+    import checkerboardMarkerImage from "@/assets/checkerboardmarker.png"
 
     const props = defineProps([
         "correctLocation",
@@ -26,7 +27,7 @@
     })
 
     const greenMarker = L.icon({
-        iconUrl: greenMarkerImage,
+        iconUrl: localStorage.getItem("checkerboardMarker") ? checkerboardMarkerImage : greenMarkerImage,
         iconSize: [24, 41],
         iconAnchor: [12, 41]
     })
@@ -69,9 +70,15 @@
         <h1>Photo copyright</h1>
         <section v-for="object of props.copyright">
             <h6>Author:</h6>
-            <p>{{ object.author }}</p>
+            <a 
+                :href="'https://api.panoramax.xyz/#focus=pic&pic=' + object.examplePhoto"
+                title="Go to a photo of this author that you've seen"
+            >{{ object.author }}</a>
             <h6>License:</h6>
-            <a :href="object.licenseLink">{{ object.license }}</a>
+            <a 
+                :href="object.licenseLink"
+                title="View the license"
+            >{{ object.license }}</a>
         </section>
     </aside>
 </template>

@@ -79,6 +79,15 @@
                 src="@/assets/info.png" 
                 alt="i"
             ></button>
+
+            <button 
+                class="smallButton"
+                title="Change the settings"
+                @click="$emit('showSettings')"
+            ><img 
+                src="@/assets/settings.png" 
+                alt="⚙"
+            ></button>
         </section>
     </section>
 </template>
@@ -128,7 +137,7 @@
         font-size: 150%;
         border-radius: 20px;
         box-shadow: 0 0 10px 3px rgb(0, 0, 0, 0.3);
-        width: calc(100% - 140px);
+        width: calc(100% - 187.5px);
         font-family: Arial, Helvetica, sans-serif;
         font-weight: 600;
     }
