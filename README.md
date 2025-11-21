@@ -17,18 +17,20 @@ If you start in a city in a location with 2D photo coverage only, you can try to
 Although if you really dislike 2D photos, there's a setting that allows you to always start on a 360° sequence.
 I just mentioned sequences, those are the second difference. 
 Imagine a person moving from one place to another one, taking a photo every a moment. Then they upload them to Panoramax, and that's a sequence.
-When you use the white arrow buttons to move, you're moving along the sequence that you're currently on. 
+When you use the white arrow buttons to move, you're moving along the sequence that you're currently on.
 If you see an orange arrow button, it means that there's another sequence nearby and you can switch to it by clicking it.
 You can also navigate through a sequence by automoving, as the name suggests, it moves you automatically.
 To enable automoving click on the double arrow buttons at the top of the screen, and to stop automoving click the pause button between them.
 Automoving forward will make you automove in the direction in which the person taking the photos was moving, and automoving backwards will automove you in the opposite direction.
-The last major difference is that there's significantly less photos than on Google Street View, and that they're mostly from France.
+At the top of the screen there also are single arrow buttons for moving along the sequence one photo per click, you can use them instead of the buttons on the ground and you can also click them faster than the ones on the ground.
+The last major difference is that there's significantly less photos than on Google Street View, and that they're mostly from France. 
+This makes it so your location is very often there, if you want to prevent that you can enable the Never start in France setting.
 
 ## How to play in general
 You can play it at [https://panoramaxguessr.k327.eu](https://panoramaxguessr.k327.eu) or build and host it yourself.
 When you start, you're put into a random real life place, and your goal is to find where you are and select the location on the map.
 To do so you move around and try to find information. There's a chance of being in a place with only one photo, in that case you have to place your guess without moving. It's possible to remove that chance with a setting though.
-You can move by a bit by clicking the single arrow buttons, and you can start automoving by clicking the double arrow buttons at the top of the screen.
+You can move by a bit by clicking the single arrow buttons on the ground or at the top of the screen, and you can start automoving by clicking the double arrow buttons that are at the top of the screen as well.
 There's also a button to go back to the primary location, which is below the map on the screen. Left to it is a compass that you can use to your advantage as well.
 When you're finished looking for where you are, select your guess on the map and click the Guess button. 
 You'll see a fullscreen map with the correct location marked with a green marker on it.
