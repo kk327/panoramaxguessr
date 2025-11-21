@@ -16,6 +16,8 @@
     const loadingDotAmount = ref(0);
     const reloading = ref(false);
     const visibleInfo = ref("");
+    const interfaceOpacity = ref(localStorage.getItem("interfaceOpacity") ?? 40);
+    const mapAfterHover = ref(localStorage.getItem("mapAfterHover"))
 
     function onLoad(latitude, longitude) {
         loaded.value = true;
@@ -66,6 +68,7 @@
 <template>
     <Panoramax 
         v-if="!gameEnded && !reloading"
+        :interfaceOpacity="interfaceOpacity"
         @loaded="(lon, lat) => onLoad(lon, lat)" 
         @rotationChanged="(newRotation) => rotation = newRotation"
         @addCopyright="(object) => addCopyright(object)"
@@ -75,6 +78,8 @@
     <LocationSelector 
         v-if="loaded && !gameEnded"
         :rotation="rotation"
+        :interfaceOpacity="interfaceOpacity"
+        :mapAfterHover="mapAfterHover"
         @guessPlaced="onGameEnd"
         @backToStart="panoramax.goBackToStart()"
         @showAboutInfo="visibleInfo = 'about'"
@@ -89,14 +94,17 @@
     <Info
         v-if="visibleInfo"
         :visibleInfo="visibleInfo"
+        :interfaceOpacity="interfaceOpacity"
         @close="visibleInfo = ''"
+        @interfaceOpacityChanged="(opacity) => interfaceOpacity = opacity"
+        @mapAfterHoverChanged="(value) => mapAfterHover = value"
     />
-    <section 
+    <div 
         v-if="!successfullyLoaded"
         id="loadingText"
     >
         <p>Loading Panoramax<br>Please wait{{ ".".repeat(loadingDotAmount) }}</p>
-    </section>
+    </div>
 </template>
 
 <style>
@@ -175,5 +183,9 @@
         font-size: 150%;
         text-align: center;
         background-color: #37474f;
+    }
+
+    * {
+        accent-color: red;
     }
 </style>

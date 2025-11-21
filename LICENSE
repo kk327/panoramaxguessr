@@ -1,3 +1,5 @@
+This excludes the files inside /public/libs/ which have their own licenses.
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

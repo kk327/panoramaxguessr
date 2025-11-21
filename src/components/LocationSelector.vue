@@ -3,7 +3,9 @@
     import redMarkerImage from "@/assets/redmarker.png"
 
     const props = defineProps([
-        "rotation"
+        "rotation",
+        "interfaceOpacity",
+        "mapAfterHover"
     ]);
 
     const markerPlaced = ref(false);
@@ -44,9 +46,17 @@
 </script>
 
 <template>
-    <section id="main">
-        <section id="map"></section>
-        <section id="bar">
+    <div 
+        id="main"
+        :style="{ opacity: interfaceOpacity / 100,
+                  height: !mapAfterHover ? '350px' : '' }"
+    >
+        <div 
+            id="map"
+            :style="{ opacity: mapAfterHover ? '0' : '1' }"    
+        ></div>
+
+        <div id="bar">
             <button 
                 id="guessButton"
                 :disabled="!markerPlaced"
@@ -88,8 +98,8 @@
                 src="@/assets/settings.png" 
                 alt="⚙"
             ></button>
-        </section>
-    </section>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -100,6 +110,7 @@
         box-shadow: 0 0 10px 3px rgb(0, 0, 0, 0.3);
         cursor: cell;
         background-color: #aad3df;
+        transition-duration: 300ms;
     }
 
     #bar {
@@ -113,20 +124,26 @@
     #main {
         display: flex;
         flex-direction: column;
-        align-items: end;
+        align-items: start;
         position: fixed;
         right: 15px;
         bottom: 15px;
         width: 400px;
-        height: 350px;
         transition-duration: 200ms;
         max-height: calc(100vh - 30px);
         max-width: calc(100vw - 30px);
+
+        &:hover {
+            opacity: 1 !important;
+            #map {
+                opacity: 1 !important;
+            }
+        }
     }
 
     #main:hover {
         width: 800px;
-        height: 645px;
+        height: 645px !important;
     }
 
     #guessButton {
@@ -197,10 +214,12 @@
             max-width: 100vw;
             background-color: rgb(32, 32, 32);
             border-bottom: rgb(32, 32, 32) solid 7.5px;
+            opacity: 100% !important;
         }
 
         #map {
             border-radius: 0px;
+            opacity: 100% !important;
         }
 
         #bar {
@@ -208,6 +227,7 @@
             box-sizing: border-box;
         }
     }
+    
 
     @media (max-width: 1000px) and (orientation: landscape) {
         #main:not(:hover) {

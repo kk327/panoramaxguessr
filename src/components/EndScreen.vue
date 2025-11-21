@@ -64,11 +64,11 @@
 </script>
 
 <template>
-    <section id="map"></section>
+    <div id="map"></div>
     <button @click="newGame()">Next game</button>
     <aside id="copyright">
         <h1>Photo copyright</h1>
-        <section v-for="object of props.copyright">
+        <div v-for="object of props.copyright">
             <h6>Author:</h6>
             <a 
                 :href="'https://api.panoramax.xyz/#focus=pic&pic=' + object.examplePhoto"
@@ -79,7 +79,7 @@
                 :href="object.licenseLink"
                 title="View the license"
             >{{ object.license }}</a>
-        </section>
+        </div>
     </aside>
 </template>
 
@@ -128,10 +128,10 @@
         max-height: 320px;
         overflow-y: auto;
         box-shadow: 0 0 10px 3px rgb(0, 0, 0, 0.3);
+        text-align: center;
     }
 
     #copyright > section {
-        text-align: center;
         padding: 0 !important;
     }
 

@@ -1,5 +1,10 @@
 <script setup>
     import { onMounted, ref, onUnmounted } from 'vue';
+    import { getCountry } from  'easy-reverse-geocoding';
+
+    const props = defineProps([
+        "interfaceOpacity"
+    ]);
 
     const emit = defineEmits([
         "loaded",
@@ -57,9 +62,10 @@
                 continue;
             }
 
-            if (localStorage.getItem("startOn360")) {
+            if (localStorage.getItem("startOn360") || localStorage.getItem("neverStartInFrance")) {
                 const sequenceData = await(await fetch(sequence)).json();
-                if (sequenceData.summaries["pers:interior_orientation"][0].field_of_view != "360") {
+
+                if ((localStorage.getItem("startOn360") && sequenceData.summaries["pers:interior_orientation"][0].field_of_view != "360") || (localStorage.getItem("neverStartInFrance") && getCountry((sequenceData.extent.spatial.bbox[0][1] + sequenceData.extent.spatial.bbox[0][3]) / 2, (sequenceData.extent.spatial.bbox[0][0] + sequenceData.extent.spatial.bbox[0][2]) / 2).name == "France")) {
                     continue;
                 }
             }
@@ -89,17 +95,21 @@
                 examplePhoto: picture
             });
         }
+        
+        if (unmounted.value) {
+            return;
+        }
+        emit("successfulLoad");
 
         viewer = new Panoramax.Viewer(
-        "viewer",
-        instance,
+            "viewer",
+            instance,
             {
                 selectedPicture: picture,
                 hash: false
             }
         );
-        
-        emit("successfulLoad");
+
         viewer.addEventListener("psv:picture-loaded", loaded);
         viewer.addEventListener("select", pictureChanged);
         viewer.addEventListener("focus-changed", () => viewer.setFocus("pic"));
@@ -177,6 +187,12 @@
         }
     }
 
+    function moveBy(amount) {
+        const id = picturesInSequence.value[picturesInSequence.value.indexOf(pictureId.value) + amount];
+        viewer.select("", id);
+        pictureId.value = id;
+    }
+
     function stopAutomoving() {
         viewer.stopSequence();
         automovingBackwards.value = false;
@@ -189,68 +205,127 @@
 
 <template>
     <main id="viewer"></main>
-    <section 
-        id="additionalNavigation" 
-        v-if="hasLoaded"
-        :class="{ darkened: picturesInSequence.length == 1 }"
-    >
-        <button 
-            class="button"
-            @click="playSequenceBackwards()"
-            title="Automove backwards"
-            :disabled="picturesInSequence.indexOf(pictureId) == 0 || picturesInSequence.length == 1"
-            :class="{ selected: automovingBackwards }"
-        ><img 
-            src="@/assets/automove.png" 
-            alt="<<"
-        ></button>
+    <div id="additionalNavigationWrapper">
+        <div 
+            id="additionalNavigation" 
+            v-if="hasLoaded"
+            :class="{ darkened: picturesInSequence.length == 1 }"
+            :style="{ opacity: interfaceOpacity / 100 }"
+        >
+            <button 
+                class="button"
+                @click="moveBy(-1)"
+                title="Move backwards in the sequence (3)"
+                :disabled="picturesInSequence.indexOf(pictureId) == 0 || picturesInSequence.length == 1"
+                :style="{ borderRadius: picturesInSequence.indexOf(pictureId) == 0 || picturesInSequence.length == 1 ? '20px 0 0 20px' : '20px' }"
+            ><img 
+                src="@/assets/move.png" 
+                alt="<" 
+            ></button>
 
-        <button 
-            class="button"
-            @click="stopAutomoving()"
-            title="Stop automoving"
-            :disabled="!(automovingBackwards || automovingForward)"
-        ><img 
-            src="@/assets/pause.png" 
-            alt="||"
-        ></button>
+            <button 
+                class="button"
+                @click="playSequenceBackwards()"
+                title="Automove backwards (b)"
+                :disabled="picturesInSequence.indexOf(pictureId) == 0 || picturesInSequence.length == 1"
+                :class="{ selected: automovingBackwards }"
+                :style="{ borderRadius: picturesInSequence.indexOf(pictureId) == 0 || picturesInSequence.length == 1 ? '' : '20px' }"
+            ><img 
+                src="@/assets/automove.png" 
+                alt="<<"
+            ></button>
 
-        <button 
-            class="button"
-            @click="playSequenceForward()"
-            title="Automove forward"
-            :disabled="picturesInSequence.indexOf(pictureId) == picturesInSequence.length - 1 || picturesInSequence.length == 1"
-            :class="{ selected: automovingForward }"
-        ><img 
-            src="@/assets/automove.png" 
-            alt="<<" 
-            id="automoveForward"
-        ></button>
-    </section>
+            <div 
+                id="background"
+                :style="{ borderRadius: picturesInSequence.length == 1 ?
+                                            ''
+                                            : picturesInSequence.indexOf(pictureId) == 0 ?
+                                                '0 20px 20px 0'
+                                                : picturesInSequence.indexOf(pictureId) == picturesInSequence.length - 1 ?
+                                                    '20px 0 0 20px'
+                                                    : '20px' }"
+            >
+                <button 
+                    class="button"
+                    @click="stopAutomoving()"
+                    :title="automovingForward ? 
+                                'Stop automoving (space)'
+                                : automovingBackwards ?
+                                    'Stop automoving (b)'
+                                    : 'Stop automoving (b/space)'"
+                    :disabled="!(automovingBackwards || automovingForward) || (automovingBackwards && picturesInSequence.indexOf(pictureId) == 0) || (automovingForward && picturesInSequence.indexOf(pictureId) == picturesInSequence.length - 1)"
+                    style="border-radius: 20px"
+                ><img 
+                    src="@/assets/pause.png" 
+                    alt="||"
+                ></button>
+            </div>
+
+            <button 
+                class="button"
+                @click="playSequenceForward()"
+                title="Automove forward (space)"
+                :disabled="picturesInSequence.indexOf(pictureId) == picturesInSequence.length - 1 || picturesInSequence.length == 1"
+                :class="{ selected: automovingForward }"
+                :style="{ borderRadius: picturesInSequence.indexOf(pictureId) == picturesInSequence.length - 1 || picturesInSequence.length == 1 ? '' : '20px' }"
+            ><img 
+                src="@/assets/automove.png" 
+                alt="<<" 
+                class="forward"
+            ></button>
+
+            <button 
+                class="button"
+                @click="moveBy(1)"
+                title="Move forward in the sequence (9)"
+                :disabled="picturesInSequence.indexOf(pictureId) == picturesInSequence.length - 1 || picturesInSequence.length == 1"
+                :style="{ borderRadius: picturesInSequence.indexOf(pictureId) == picturesInSequence.length - 1 || picturesInSequence.length == 1 ? '0 20px 20px 0' : '20px' }"
+            ><img 
+                src="@/assets/move.png" 
+                alt="<" 
+                class="forward"
+            ></button>
+        </div>
+    </div>
 </template>
 
 <style scoped>
+    #background {
+        background-color: rgb(235, 235, 235); 
+        height: 40px; 
+        width: 40px;
+    }
+
     #viewer {
         width: 100vw;
         height: 100vh;
     }
 
-    #additionalNavigation {
+    #additionalNavigationWrapper {
         position: fixed;
         top: 15px;
-        left: calc(50vw - 60px);
-        width: 120px;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+    }
+
+    #additionalNavigation {
         height: 40px;
         box-shadow: 0 0 10px 3px rgb(0, 0, 0, 0.3);
         display: flex;
+        justify-content: center;
         background-color: white;
         border-radius: 20px;
+        transition-duration: 200ms;
+        
+        &:hover {
+            opacity: 1 !important;
+        }
     }
 
     button {
         width: 40px;
         height: 40px;
-        border-radius: 20px;
         border: none;
         background-color: white;
         color: rgb(32, 32, 32);
@@ -294,7 +369,7 @@
         height: 20px;
     }
 
-    #automoveForward {
+    .forward {
         rotate: 180deg;
     }
 
